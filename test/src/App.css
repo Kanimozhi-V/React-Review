@@ -1,0 +1,31 @@
+.product-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+}
+
+.product-table th,
+.product-table td {
+  text-align: center;
+  padding: 10px;
+  border: 1px solid #ddd;
+}
+
+form {
+  display: flex;
+  gap : 30px;
+}
+
+form input{
+  height: 30px;
+  width: 300px;
+}
+
+form button{
+  height: 30px;
+  width: 60px;
+  cursor: pointer;
+  background-color: rgba(0,255,0,0.5);
+}
+
+
