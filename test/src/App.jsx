@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import './App.css';
+import useDebounce from './useDebounce';
 function App() {
 
   const [data,setData] = useState([]);
@@ -8,30 +9,45 @@ function App() {
 
   const [filteredData,setFilteredData] = useState([]);
 
-  const fetchData = useEffect(() => {
+  useEffect(() => {
     fetch("https://dummyjson.com/products")
     .then(res =>res.json())
-    .then(data => setData(data.products));
+    .then(data => {
+      setData(data.products);
+      setFilteredData(data.products)
+  });
   }, []);
 
-  console.log(data);
+
+  const debouncedSearch = useDebounce(search, 500);
+
+  useEffect(() => {
+    if (debouncedSearch) {
+      const filtered = data.filter((product) =>
+        product.title.toLowerCase().includes(debouncedSearch.toLowerCase())
+      );
+      setFilteredData(filtered);
+    } else {
+      setFilteredData(data);
+    }
+  }, [debouncedSearch, data]);
 
   const handleChange = (e) => {
     setSearch(e.target.value)
   }
 
-  const handleSearch = (e) => {
-    e.preventDefault();
-    if (search) {
-      const filtered = data.filter(product =>
-        product.title.toLowerCase().includes(search.toLowerCase())
-      );
-      console.log(filtered)
-      setFilteredData(filtered);
-    } else {
-      setFilteredData(data);
-    }
-  };
+  // const handleSearch = (e) => {
+  //   e.preventDefault();
+  //   if (search) {
+  //     const filtered = data.filter(product =>
+  //       product.title.toLowerCase().includes(search.toLowerCase())
+  //     );
+  //     console.log(filtered)
+  //     setFilteredData(filtered);
+  //   } else {
+  //     setFilteredData(data);
+  //   }
+  // };
 
   const renderTable = (products) => {
     return (
@@ -60,9 +76,10 @@ function App() {
 
   return (
     <>
-    <form onSubmit={handleSearch}>
+    {/* <form onSubmit={handleSearch}> */}
+    <form>
     <input type='text' onChange={handleChange} placeholder='Enter the product to search'/>
-    <button type='submit'>Search</button>
+    {/* <button type='submit'>Search</button> */}
     </form>
       <h1>Product List</h1>
       {filteredData.length > 0 ? renderTable(filteredData) : renderTable(data)}
